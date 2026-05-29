@@ -101,7 +101,7 @@ Single GPU, default PPLNS settings, alpha-miner v1.7.x:
 | RTX 5090 | 350–360 |
 | H100 SXM 80GB | 610–620 |
 | B200 | 750–800 (preliminary) |
-| CMP 100-210 (Volta) | ~70 |
+| CMP 100-210 (Volta) | ~11 |
 | A100 | ~131 |
 
 Live, sortable, per-version table with measured + community-submitted numbers: [pearl.alphapool.tech/#hashrates](https://pearl.alphapool.tech/#hashrates)
