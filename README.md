@@ -63,13 +63,6 @@ Vardiff works out of the box. For multi-GPU rigs or reconnecting wrappers (HiveO
 ./alpha-miner --pool stratum+tcp://us2.alphapool.tech:5566 --address prl1p... --worker myrig --password 'x;d=65536'
 ```
 
-| GPU class | `d=` |
-|---|---|
-| 3060 Ti / 3070 | 16384 |
-| 3080 / 3090 / 4070 | 32768 |
-| 4080 / 4090 / 5080 | 65536 |
-| 5090 / H100 / multi-GPU | 131072+ |
-
 ## Multi-GPU
 
 One process drives all GPUs. Pin specific cards with `--devices 0,1,2`. For per-GPU worker names on the pool, run one process per GPU, each with a unique `--worker`.
