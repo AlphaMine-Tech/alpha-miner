@@ -8,7 +8,7 @@ GPU miner for the **Pearl (PRL)** network through AlphaPool Stratum. NVIDIA CUDA
 
 ## Supported release
 
-Alpha Miner 1.9.2 currently provides one supported artifact:
+Alpha Miner 1.9.2 currently provides one supported raw executable:
 
 - Ubuntu 22.04+ / Linux x86_64
 - GLIBC 2.34 or newer
@@ -26,21 +26,13 @@ There is currently **no V3-qualified HiveOS, Windows, or Docker package**. Do no
 ## Download and verify
 
 ```bash
-curl -LO https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/alpha-miner-1.9.2-linux-amd64.tar.gz
+curl -LO https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/alpha-miner
 curl -LO https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/SHA256SUMS
 sha256sum -c SHA256SUMS
-tar xzf alpha-miner-1.9.2-linux-amd64.tar.gz
-cd alpha-miner-1.9.2
-sha256sum -c SHA256SUMS
+chmod +x alpha-miner
 ```
 
-Expected package identity:
-
-```text
-cbf953382e8dc59cfa6c92b397e23f69b66279c07149dc4d66551bd019f7bba7  alpha-miner-1.9.2-linux-amd64.tar.gz
-```
-
-Expected miner core identity:
+Expected binary identity:
 
 ```text
 27035620fbe1468a39ebd4857d3425c42232e107634dc53ae7e7e43756f7f628  alpha-miner
