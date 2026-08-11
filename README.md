@@ -21,21 +21,22 @@ Alpha Miner 1.9.2 currently provides one supported raw executable:
 | 8.9 | RTX 40 series |
 | 12.0 | RTX 50 series |
 
-There is currently **no V3-qualified HiveOS, Windows, or Docker package**. Do not use an older HiveOS archive, Windows executable, or Docker image after height `99000`.
+A GLIBC 2.34+ HiveOS package is available for **testing** below. There is currently no V3-compatible Windows or Docker package. Do not use an older HiveOS archive, Windows executable, or Docker image after height `99000`.
 
 ## Download and verify
 
 ```bash
 curl -LO https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/alpha-miner
 curl -LO https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/SHA256SUMS
-sha256sum -c SHA256SUMS
+sha256sum --ignore-missing -c SHA256SUMS
 chmod +x alpha-miner
 ```
 
-Expected binary identity:
+Expected release identities:
 
 ```text
 27035620fbe1468a39ebd4857d3425c42232e107634dc53ae7e7e43756f7f628  alpha-miner
+a500556b7b3488efde1f124c89dcd17dcfa4fc5325685d5c429c8f2abd30955e  alpha-V1.9.2.20260811.tar.gz
 ```
 
 ## Pool endpoints
@@ -85,6 +86,22 @@ The worker argument is the complete `PRL_ADDRESS.WORKER` identity:
 Rank, geometry, and backend are fixed to the AlphaPool mainnet rank-128 profile. Legacy flags such as `--pool`, `--address`, `--devices`, `--force-backend`, `--rank`, and `--gemm` are not accepted by 1.9.2.
 
 Run one process per GPU, using a unique worker suffix and matching `--gpu` index for each process.
+
+## HiveOS testing package
+
+Flight sheet → **Add Custom Miner**:
+
+| Field | Value |
+|---|---|
+| Installation URL | `https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/alpha-V1.9.2.20260811.tar.gz` |
+| Miner Name | `alpha` |
+| Pool URL | `stratum+tcp://us2.alphapool.tech:5566` |
+| Wallet template | `YOUR_PRL_ADDRESS.WORKER` |
+| Extra config | Optional: `--gpu 0` |
+
+The archive uses the canonical `alpha/` HiveOS layout and verifies the exact V3 core SHA-256 before every start. It requires GLIBC 2.34+ and fails closed on older HiveOS bases. Unsupported rank, backend, and geometry overrides are rejected.
+
+The 1.9.2 core does not yet emit the legacy per-GPU telemetry fields consumed by HiveOS. The local HiveOS dashboard may therefore display zero hashrate during this testing phase; use the worker statistics at <https://pearl.alphapool.tech> as the authoritative hashrate and share-accounting source.
 
 ## systemd example
 
