@@ -1,25 +1,57 @@
-# alpha-miner
+# Alpha Miner 1.9.2
 
-GPU miner for the **Pearl (PRL)** network, via AlphaPool stratum. NVIDIA only, CUDA driver **545+**, **0% dev fee**.
+GPU miner for the **Pearl (PRL)** network through AlphaPool Stratum. NVIDIA CUDA, **0% dev fee**.
 
+> **Mandatory post-fork release:** Pearl certificate V3 activated at mainnet height `99000`. Alpha Miner versions before `1.9.2` do not produce compatible post-fork proofs.
+>
 > Binary distribution by permission of the author. Source remains private.
 
-## Hardware
+## Supported release
 
-Architecture is auto-detected (override with `--force-backend volta|ampere|ada|hopper|blackwell|blackwell-native`):
+Alpha Miner 1.9.2 currently provides one supported artifact:
 
-| Arch | Cards |
+- Ubuntu 22.04+ / Linux x86_64
+- GLIBC 2.34 or newer
+- NVIDIA driver 545+
+- CUDA compute capabilities `8.6`, `8.9`, and `12.0`
+
+| Compute capability | Cards |
 |---|---|
-| Volta (sm_70) | V100, CMP 100-210 |
-| Ampere (sm_86) | RTX 30-series, A-series, CMP HX |
-| Ada (sm_89) | RTX 40-series (incl. 4060 Ti, 4080 SUPER) |
-| Hopper (sm_90) | H100, H200 |
-| Blackwell (sm_120) | RTX 50-series, B100/B200 |
+| 8.6 | RTX 30 series |
+| 8.9 | RTX 40 series |
+| 12.0 | RTX 50 series |
+
+There is currently **no V3-qualified HiveOS, Windows, or Docker package**. Do not use an older HiveOS archive, Windows executable, or Docker image after height `99000`.
+
+## Download and verify
+
+```bash
+curl -LO https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/alpha-miner-1.9.2-linux-amd64.tar.gz
+curl -LO https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.2/SHA256SUMS
+sha256sum -c SHA256SUMS
+tar xzf alpha-miner-1.9.2-linux-amd64.tar.gz
+cd alpha-miner-1.9.2
+sha256sum -c SHA256SUMS
+```
+
+Expected package identity:
+
+```text
+cbf953382e8dc59cfa6c92b397e23f69b66279c07149dc4d66551bd019f7bba7  alpha-miner-1.9.2-linux-amd64.tar.gz
+```
+
+Expected miner core identity:
+
+```text
+27035620fbe1468a39ebd4857d3425c42232e107634dc53ae7e7e43756f7f628  alpha-miner
+```
 
 ## Pool endpoints
 
-Pick the closest region. **PPLNS = port `5566`, SOLO = port `5567`.**
-**Never use `pearl.alphapool.tech` as the stratum host** — it's HTTPS/Cloudflare (dashboard, downloads, API), not stratum TCP.
+- PPLNS: port `5566`
+- Dedicated SOLO: port `5573`
+
+Available regional hosts:
 
 | Region | Host |
 |---|---|
@@ -29,101 +61,75 @@ Pick the closest region. **PPLNS = port `5566`, SOLO = port `5567`.**
 | Europe 2 | `eu2.alphapool.tech` |
 | Russia / Eurasia | `ru1.alphapool.tech` |
 | India | `in1.alphapool.tech` |
-| Asia (Singapore) | `sg1.alphapool.tech` |
+| Asia / Singapore | `sg1.alphapool.tech` |
 
-## Quick start (Linux)
+Do not use `pearl.alphapool.tech` as a Stratum host; it is the HTTPS dashboard/API endpoint.
+
+## Run
+
+The worker argument is the complete `PRL_ADDRESS.WORKER` identity:
 
 ```bash
-curl -L -o alpha-miner https://github.com/AlphaMine-Tech/alpha-miner/releases/latest/download/alpha-miner
-chmod +x alpha-miner
-curl -L https://github.com/AlphaMine-Tech/alpha-miner/releases/latest/download/SHA256SUMS | sha256sum -c   # optional
-./alpha-miner --pool stratum+tcp://us2.alphapool.tech:5566 --address prl1pYOURADDRESS --worker myrig
+./alpha-miner \
+  --host us2.alphapool.tech \
+  --port 5566 \
+  --worker prl1pYOUR_ADDRESS.rig01 \
+  --password 'x;d=50000' \
+  --gpu 0
 ```
 
-Keep the run command on **one line** — `\` continuations can mangle in some terminals and abort the miner with `unknown argument: " "`.
-
-## Options
+### Options
 
 | Flag | Purpose |
 |---|---|
-| `--pool HOST:PORT` | Pool endpoint (or `stratum+tcp://HOST:PORT`) |
-| `--address prl1p...` | Pearl payout address (required) |
-| `--worker NAME` | Worker label (reported as `ADDRESS.WORKER`) |
-| `--password 'x;d=N'` | Static difficulty (see below) |
-| `--devices 0,1,2` | Mine on specific CUDA devices |
-| `--list-devices` | List GPUs and exit |
-| `--force-backend ...` | Override arch auto-detect |
-| `--version` / `help` | Print version / full flag list |
+| `--host HOST` | Stratum host; default `us2.alphapool.tech` |
+| `--port PORT` | Stratum port; default `5566` |
+| `--worker ADDRESS.WORKER` | Required complete payout address and worker identity |
+| `--password PASS` | Stratum password; use `x` for vardiff or `x;d=N` for static difficulty |
+| `--gpu ID` | CUDA device index; default `0` |
+| `--version` | Print version and exit |
+| `--help` | Print the exact supported CLI |
 
-## Static difficulty
+Rank, geometry, and backend are fixed to the AlphaPool mainnet rank-128 profile. Legacy flags such as `--pool`, `--address`, `--devices`, `--force-backend`, `--rank`, and `--gemm` are not accepted by 1.9.2.
 
-Vardiff works out of the box. For multi-GPU rigs or reconnecting wrappers (HiveOS, vast.ai), pin difficulty in the password field:
+Run one process per GPU, using a unique worker suffix and matching `--gpu` index for each process.
 
-```bash
-./alpha-miner --pool stratum+tcp://us2.alphapool.tech:5566 --address prl1p... --worker myrig --password 'x;d=65536'
-```
-
-## Multi-GPU
-
-One process drives all GPUs. Pin specific cards with `--devices 0,1,2`. For per-GPU worker names on the pool, run one process per GPU, each with a unique `--worker`.
-
-## HiveOS
-
-Flight sheet → **Add Custom Miner**:
-
-| Field | Value |
-|---|---|
-| Installation URL | `https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.7.9/alpha-V1.7.9.20260617.tar.gz` |
-| Miner Name | `alpha` |
-| Pool URL | `stratum+tcp://us2.alphapool.tech:5566` (comma-separate hosts for failover) |
-| Wallet template | your `prl1p…` PRL address |
-
-The wrapper handles multi-pool failover and per-GPU dashboard stats out of the box.
-
-## Docker
-
-```bash
-docker run --gpus all -e PEARL_ADDRESS=prl1pYOUR_ADDR -e PEARL_POOL_HOST=us2.alphapool.tech alphaminetech/pearl-miner:latest
-```
-
-Env: `PEARL_ADDRESS` (required), `PEARL_WORKER` (default `docker-rig`), `PEARL_POOL_PORT` (`5566`, or `5567` for SOLO), `PEARL_DIFFICULTY`, `PEARL_DEVICES`.
-
-`:latest` is **not** auto-updating — run `docker pull alphaminetech/pearl-miner:latest` to refresh, or pin an explicit tag (e.g. `:1.7.9`). Cloud marketplaces (Salad, Vast.ai) cache the image at deploy — **redeploy the group** to pick up a new version. Check what's running: `docker exec <container> alpha-miner --version`.
-
-## systemd (Linux)
+## systemd example
 
 ```ini
-# /etc/systemd/system/alpha-miner.service
 [Unit]
+Description=Alpha Miner 1.9.2
 After=network-online.target
+
 [Service]
-ExecStart=/usr/local/bin/alpha-miner --pool stratum+tcp://us2.alphapool.tech:5566 --address prl1p... --worker mybox --password 'x;d=32768'
+ExecStart=/usr/local/bin/alpha-miner --host us2.alphapool.tech --port 5566 --worker prl1pYOUR_ADDRESS.rig01 --password x --gpu 0
 Restart=on-failure
 RestartSec=10
+
 [Install]
 WantedBy=multi-user.target
 ```
 
 ```bash
-sudo install -m 755 alpha-miner /usr/local/bin/ && sudo systemctl enable --now alpha-miner
+sudo install -m 755 alpha-miner /usr/local/bin/alpha-miner
+sudo systemctl enable --now alpha-miner
 sudo journalctl -u alpha-miner -f
 ```
 
 ## Troubleshooting
 
-| Symptom | Fix |
+| Symptom | Action |
 |---|---|
-| `libcuda.so.1: cannot open shared object` | NVIDIA driver missing/old — install driver 545+ |
-| `no kernel image is available` | Unsupported arch build — try `--force-backend volta` (V100/CMP) |
-| `unknown argument: " "` | Multi-line paste stripped newlines — use the single-line command |
-| Vardiff stuck low | Pin `--password 'x;d=32768'` (or higher) |
-| `stale: chain advanced` rejects | Normal (pool moved to a new block); <1% is healthy |
-| HiveOS shows `0 H/s` per-GPU | Old wrapper — reinstall the latest HiveOS release |
+| `unknown or protected option` | Remove legacy flags and use only the documented 1.9.2 CLI |
+| `libcuda.so.1` missing | Install or repair the NVIDIA driver |
+| GLIBC version error | Upgrade to Ubuntu 22.04+; this build requires GLIBC 2.34+ |
+| No compatible kernel image | This release supports only compute capabilities 8.6, 8.9, and 12.0 |
+| Shares rejected after height 99000 | Verify version `1.9.2` and the exact core SHA-256 above |
 
 ## Support
 
-Pool stats: <https://pearl.alphapool.tech> · Discord: link in pool footer · Binary issues: open a GitHub issue.
+Pool stats: <https://pearl.alphapool.tech> · Discord: link in the pool footer · Binary issues: open a GitHub issue.
 
 ## License
 
-Binary redistribution permitted via this repository. Source is not public. All rights reserved by the author.
+Binary redistribution is permitted through this repository. Source is not public. All rights reserved by the author.
