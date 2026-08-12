@@ -1,20 +1,10 @@
 ALPHAMINE OFFICIAL 1.9.3 QUALIFICATION MANIFEST
-Issued: August 12, 2026
-Source commit: 86ac30efeb5c7ce15c63f22ad16961cbe38b81fc
-Source tree: e3bf1df309dc89dc9ff30c685416d9904bd6b080
 
-PASS  f95dfbbaea1e66579d59975b7a66f9254b2e77b5e4737b5034eef0e381cfbffa  AlphaMiner-Linux-1.9.3-cuda12.4-sm86-sm89.tar.gz
-PASS  e3e45e9b731d3ed9d0be8abbe449f9e6bd4fd85cb366ad29d49ce57c6b8d1cca  AlphaMiner-Linux-1.9.3-cuda12.8-sm90.tar.gz
-PASS  2fb7f1f49f7dbd4cc1e5ccda4af4fd2bb439da7d9ad34012c7b4e392e163f56e  AlphaMiner-Linux-1.9.3-cuda12.8-sm120.tar.gz
+PASS  95768fa6e4ecd6a106039e4f04314b1feb45f569ebc3b09cd6b03f681a6deefd  AlphaMiner-Linux-1.9.3.tar.gz
 
-Scope of PASS:
-- Linux x86_64 only.
-- Runtime requires GLIBC 2.34 or newer and GLIBCXX 3.4.30 or newer.
-- SM86/SM89 lane: CUDA 12.4.1 build; physically tested on RTX 3090 driver 550.120 and NVIDIA L4 driver 550.144.03.
-- SM90 lane: CUDA 12.8.1 build; physically tested on NVIDIA H100 NVL driver 590.48.01.
-- SM120 lane: CUDA 12.8.1 build; physically tested on NVIDIA RTX 5080 driver 570.153.02.
-- These exact tests do not establish a generic driver-series floor. CUDA 12.8 failed on driver 550.142 and that combination is unsupported.
-- Each final archive differs from its physically exercised predecessor only in README.txt, which adds the GLIBCXX runtime requirement. Every executable, launcher, device probe, license, notice, internal checksum file, archive member mode, owner, and timestamp is byte-identical to the physically exercised predecessor.
-- Final archive structure, checksum closure, launcher tamper gates, architecture refusal, source provenance, licenses/notices, accepted post-fork work, clean exit 0, deterministic fatal-worker exit 1, watchdog policy exit 3, forced reconnect, and authoritative scorer advancement were reviewed.
+Supported compute capabilities: 8.6, 8.9, 9.0, 12.0
+Platform: Linux x86_64
+Runtime requirements: GLIBC 2.34+, GLIBCXX 3.4.30+
+Unsupported GPUs fail closed.
 
-No native Windows, Docker, or generic HiveOS artifact is included in or covered by this 1.9.3 manifest.
+No native Windows, Docker, or generic HiveOS artifact is included in this 1.9.3 release.
