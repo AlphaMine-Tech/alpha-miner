@@ -37,7 +37,7 @@ Use the dedicated HiveOS package:
 
 `https://github.com/AlphaMine-Tech/alpha-miner/releases/download/v1.9.3/alpha-1.9.3.tar.gz`
 
-SHA-256: `b8b0f445056a64a0511a590f2f8de9d0b3c8deb6b4630b7d4bb4915325882065`
+SHA-256: `af1cb1a25e30c1c1b30b973b97501f18053012961f41b45f3e6433d3a36fee46`
 
 Flight sheet settings:
 
